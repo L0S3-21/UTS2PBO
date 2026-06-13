@@ -2,25 +2,22 @@ import java.util.Scanner;
 
 public class Pesawat extends Kendaraan {
 
-    // ── Atribut tambahan ──────────────────────────────────────────────────────
     private String   jamBerangkat;
     private String   jamTiba;
-    private String   kelasTiket;      // "Ekonomi" / "Bisnis" / "First Class"
-    private double   hargaPerKelas;   // tambahan harga sesuai kelas
+    private String   kelasTiket;     
+    private double   hargaPerKelas;   
     private double   hargaDasar;
 
-    // Harga tambahan per kelas
+
     private static final double HARGA_EKONOMI     =       0;
     private static final double HARGA_BISNIS      = 1_500_000;
     private static final double HARGA_FIRST_CLASS = 3_500_000;
 
-    // ── Constructor ───────────────────────────────────────────────────────────
     public Pesawat(String idKendaraan, String namaKendaraan,
                    String[] rute,
                    String jamBerangkat, String jamTiba,
                    double hargaDasar) {
 
-        // kapasitas pesawat : 10 baris × 6 kolom = 60 kursi
         super(idKendaraan, "Pesawat", namaKendaraan, 60, rute);
 
         this.jamBerangkat  = jamBerangkat;
@@ -31,14 +28,12 @@ public class Pesawat extends Kendaraan {
         this.tempatDuduk   = null;
     }
 
-    // ── Getter tambahan ───────────────────────────────────────────────────────
     public String getJamBerangkat()  { return jamBerangkat; }
     public String getJamTiba()       { return jamTiba; }
     public String getKelasTiket()    { return kelasTiket; }
     public double getHargaDasar()    { return hargaDasar; }
     public double getHargaPerKelas() { return hargaPerKelas; }
 
-    // ── Pilih kelas tiket ─────────────────────────────────────────────────────
     public void pilihKelas(Scanner scanner) {
         System.out.println();
         System.out.println("  ╔══════════════════════════════════════╗");
@@ -69,13 +64,11 @@ public class Pesawat extends Kendaraan {
         System.out.println("  Kelas dipilih : " + kelasTiket);
     }
 
-    // ── Hitung harga ──────────────────────────────────────────────────────────
     @Override
     public double hitungHarga(int jumlahTiket) {
         return (hargaDasar + hargaPerKelas) * jumlahTiket;
     }
 
-    // ── Tampil & pilih kursi ──────────────────────────────────────────────────
     @Override
     public String pilihKursi(Scanner scanner) {
 
@@ -107,7 +100,7 @@ public class Pesawat extends Kendaraan {
             kursiDipilih = scanner.nextLine().trim().toUpperCase();
 
             if (kursiDipilih.length() < 2) {
-                System.out.println("  Format salah. Gunakan format seperti A3 atau D10.");
+                System.out.println("  Format salah");
                 continue;
             }
 
@@ -116,17 +109,15 @@ public class Pesawat extends Kendaraan {
             try {
                 baris = Integer.parseInt(kursiDipilih.substring(1));
             } catch (NumberFormatException e) {
-                System.out.println("  Format salah. Gunakan format seperti A3 atau D10.");
+                System.out.println("  Format salah.");
                 continue;
             }
 
-            // Validasi kolom
             if ("ABCDEF".indexOf(kolom) == -1) {
-                System.out.println("  Kolom tidak valid. Pilih antara A-F.");
+                System.out.println("  Kolom tidak valid");
                 continue;
             }
 
-            // Validasi baris
             if (baris < 1 || baris > 10) {
                 System.out.println("  Baris tidak valid. Pilih antara 1-10.");
                 continue;
@@ -138,7 +129,6 @@ public class Pesawat extends Kendaraan {
         return kursiDipilih;
     }
 
-    // ── tampilInfo ────────────────────────────────────────────────────────────
     @Override
     public void tampilInfo() {
         System.out.println("  Jenis Kendaraan  : " + jenisKendaraan);

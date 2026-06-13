@@ -5,7 +5,6 @@ import java.time.format.DateTimeParseException;
 
 public class Pemesanan {
 
-    // ── Field ─────────────────────────────────────────────────────────────────
     private Scanner    scanner;
     private Penumpang  penumpang;
     private Kendaraan  kendaraan;
@@ -19,19 +18,14 @@ public class Pemesanan {
 
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    // Tanggal tidak tersedia
     private static final String[] TANGGAL_LIBUR = {
         "25/12/2026", "31/12/2026", "01/01/2027"
     };
 
-    // ── Constructor ───────────────────────────────────────────────────────────
     public Pemesanan() {
         this.scanner = new Scanner(System.in);
     }
 
-    // =========================================================================
-    //  ENTRY POINT
-    // =========================================================================
     public void jalankan() {
         boolean lanjut = true;
         while (lanjut) {
@@ -48,13 +42,13 @@ public class Pemesanan {
             // 3. Tanggal keberangkatan
             inputTanggalKeberangkatan();
 
-            // 4a. Mobil : lama sewa + jumlah penumpang (tidak ada rute & kursi)
+            
             if (kendaraan instanceof Mobil) {
                 Mobil mobil = (Mobil) kendaraan;
                 mobil.inputLamaSewa(scanner);
                 inputJumlahPenumpangMobil();
 
-            // 4b. Kendaraan lain : rute → kelas/gerbong → kursi
+            
             } else {
                 // Pilih rute & jumlah tiket
                 boolean valid = pilihRuteDanJumlahTiket();
@@ -70,20 +64,15 @@ public class Pemesanan {
                     ((Kereta) kendaraan).pilihGerbong(scanner);
                 }
 
-                // Pilih kursi per penumpang
                 pilihKursiSemua();
             }
 
-            // 5. Hitung total harga
             totalHarga = kendaraan.hitungHarga(jumlahTiket);
 
-            // 6. Pembayaran
             prosesPembayaran();
 
-            // 7. Tampil tiket akhir
             tampilDetailPemesanan();
 
-            // 8. Kembali ke menu?
             lanjut = tanyaKembaliMenu();
         }
 
@@ -94,9 +83,6 @@ public class Pemesanan {
         scanner.close();
     }
 
-    // =========================================================================
-    //  RESET STATE
-    // =========================================================================
     private void resetState() {
         penumpang            = null;
         kendaraan            = null;
@@ -108,25 +94,19 @@ public class Pemesanan {
         totalHarga           = 0.0;
     }
 
-    // =========================================================================
-    //  1. MENU UTAMA
-    // =========================================================================
     private void tampilMenuUtama() {
         System.out.println();
-        System.out.println("  ╔══════════════════════════════════════════════╗");
-        System.out.println("  ║                                              ║");
-        System.out.println("  ║        ✈   SELAMAT DATANG DI TRAVELIS       ║");
-        System.out.println("  ║                                              ║");
-        System.out.println("  ╠══════════════════════════════════════════════╣");
-        System.out.println("  ║   Silahkan memilih tiket yang anda inginkan  ║");
-        System.out.println("  ╠══════════════════════════════════════════════╣");
-        System.out.println("  ║                                              ║");
-        System.out.println("  ║   1.  Pesawat                                ║");
-        System.out.println("  ║   2.  Kereta                                 ║");
-        System.out.println("  ║   3.  Bus                                    ║");
-        System.out.println("  ║   4.  Mobil                                  ║");
-        System.out.println("  ║                                              ║");
-        System.out.println("  ╚══════════════════════════════════════════════╝");
+        System.out.println("  =======================================");
+        System.out.println("             SELAMAT DATANG DI TRAVELIS       ");
+        System.out.println("  =======================================");
+        System.out.println("     Silahkan memilih tiket yang anda inginkan  ");
+        System.out.println("  =======================================");
+        System.out.println("                                                ");
+        System.out.println("     1.  Pesawat                                ");
+        System.out.println("     2.  Kereta                                 ");
+        System.out.println("     3.  Bus                                    ");
+        System.out.println("     4.  Mobil                                  ");
+        System.out.println("  =======================================");
     }
 
     private int inputMenuUtama() {
@@ -142,9 +122,6 @@ public class Pemesanan {
         }
     }
 
-    // =========================================================================
-    //  2. BUAT OBJEK KENDARAAN
-    // =========================================================================
     private void buatKendaraan(int pilihan) {
         switch (pilihan) {
             case 1:
@@ -188,14 +165,11 @@ public class Pemesanan {
         }
     }
 
-    // =========================================================================
-    //  3. INPUT DATA DIRI
-    // =========================================================================
     private void inputDataDiri() {
         System.out.println();
-        System.out.println("  ════════════════════════════════════════════════");
+        System.out.println("  =======================================");
         System.out.println("                DATA DIRI PENUMPANG               ");
-        System.out.println("  ════════════════════════════════════════════════");
+        System.out.println("  =======================================");
 
         System.out.print("  Nama lengkap   : ");
         String nama = scanner.nextLine().trim();
@@ -218,15 +192,12 @@ public class Pemesanan {
         System.out.println("  Data diri berhasil disimpan.");
     }
 
-    // =========================================================================
-    //  4. TANGGAL KEBERANGKATAN
-    // =========================================================================
     private void inputTanggalKeberangkatan() {
         while (true) {
             System.out.println();
-            System.out.println("  ════════════════════════════════════════════════");
+            System.out.println("  =======================================");
             System.out.println("             TANGGAL KEBERANGKATAN                ");
-            System.out.println("  ════════════════════════════════════════════════");
+            System.out.println("  =======================================");
             System.out.print("  Masukkan tanggal (dd/mm/yyyy) : ");
 
             String input = scanner.nextLine().trim();
@@ -235,7 +206,7 @@ public class Pemesanan {
             try {
                 tgl = LocalDate.parse(input, FMT);
             } catch (DateTimeParseException e) {
-                System.out.println("  Format tanggal salah. Gunakan dd/mm/yyyy.");
+                System.out.println("  Format tanggal salah.");
                 continue;
             }
 
@@ -252,12 +223,11 @@ public class Pemesanan {
 
             if (libur) {
                 System.out.println();
-                System.out.println("  ╔══════════════════════════════════════════════╗");
-                System.out.println("  ║        ⚠   TIKET TIDAK TERSEDIA   ⚠         ║");
-                System.out.println("  ╠══════════════════════════════════════════════╣");
-                System.out.println("  ║  Tanggal " + formatted + " tidak tersedia.          ║");
-                System.out.println("  ║  Silahkan pilih tanggal lain.                ║");
-                System.out.println("  ╚══════════════════════════════════════════════╝");
+                System.out.println("  =======================================");
+                System.out.println("             TIKET TIDAK TERSEDIA            ");
+                System.out.println("    Tanggal " + formatted + " tidak tersedia.          ");
+                System.out.println("    Silahkan pilih tanggal lain.                ");
+                System.out.println("  =======================================");
                 continue;
             }
 
@@ -267,16 +237,13 @@ public class Pemesanan {
         }
     }
 
-    // =========================================================================
-    //  5a. PILIH RUTE & JUMLAH TIKET  (Pesawat / Kereta / Bus)
-    // =========================================================================
     private boolean pilihRuteDanJumlahTiket() {
         String[] rute = kendaraan.getRute();
 
         System.out.println();
-        System.out.println("  ════════════════════════════════════════════════");
+        System.out.println("  =======================================");
         System.out.println("                  RUTE PERJALANAN                 ");
-        System.out.println("  ════════════════════════════════════════════════");
+        System.out.println("  =======================================");
         System.out.println("  1.  " + rute[0] + " -> " + rute[1]);
         System.out.println("  2.  " + rute[1] + " -> " + rute[0] + "  (Pulang)");
         System.out.println();
@@ -315,13 +282,13 @@ public class Pemesanan {
 
                 if (jml > kendaraan.getKapasitas()) {
                     System.out.println();
-                    System.out.println("  ╔══════════════════════════════════════════════╗");
-                    System.out.println("  ║       ✗   PEMESANAN TIDAK VALID   ✗          ║");
-                    System.out.println("  ╠══════════════════════════════════════════════╣");
-                    System.out.printf ("  ║  Melebihi kapasitas kendaraan (%d kursi).%n",
+                    System.out.println("  =======================================");
+                    System.out.println("           PEMESANAN TIDAK VALID           ");
+                    System.out.println("  =======================================");
+                    System.out.printf ("   Melebihi kapasitas kendaraan (%d kursi).%n",
                                        kendaraan.getKapasitas());
-                    System.out.println("  ║  Kembali ke menu utama...                    ║");
-                    System.out.println("  ╚══════════════════════════════════════════════╝");
+                    System.out.println("   Kembali ke menu utama                   ");
+                    System.out.println("  =======================================");
                     return false;
                 }
 
@@ -337,9 +304,6 @@ public class Pemesanan {
         return true;
     }
 
-    // =========================================================================
-    //  5b. INPUT JUMLAH PENUMPANG MOBIL
-    // =========================================================================
     private void inputJumlahPenumpangMobil() {
         System.out.println();
         System.out.println("  Kapasitas mobil : " + kendaraan.getKapasitas() + " penumpang");
@@ -365,15 +329,12 @@ public class Pemesanan {
         System.out.println("  Jumlah penumpang : " + jumlahTiket);
     }
 
-    // =========================================================================
-    //  5c. PILIH KURSI SEMUA PENUMPANG
-    // =========================================================================
     private void pilihKursiSemua() {
         kursiDipilih = "";
         System.out.println();
-        System.out.println("  ════════════════════════════════════════════════");
+        System.out.println("  ================================================");
         System.out.println("              PEMILIHAN TEMPAT DUDUK              ");
-        System.out.println("  ════════════════════════════════════════════════");
+        System.out.println("  =================================================");
 
         for (int t = 1; t <= jumlahTiket; t++) {
             System.out.println();
@@ -384,15 +345,12 @@ public class Pemesanan {
         }
     }
 
-    // =========================================================================
-    //  6. PROSES PEMBAYARAN
-    // =========================================================================
     private void prosesPembayaran() {
         // Ringkasan harga
         System.out.println();
-        System.out.println("  ════════════════════════════════════════════════");
+        System.out.println("  ================================================");
         System.out.println("                  RINGKASAN HARGA                 ");
-        System.out.println("  ════════════════════════════════════════════════");
+        System.out.println("  ================================================");
 
         if (kendaraan instanceof Pesawat) {
             Pesawat p = (Pesawat) kendaraan;
@@ -418,18 +376,18 @@ public class Pemesanan {
             System.out.printf("  Jumlah tiket       :    %15d%n", jumlahTiket);
         }
 
-        System.out.println("  ────────────────────────────────────────────────");
+        System.out.println("  =================================================");
         System.out.printf ("  TOTAL HARGA        : Rp %,15.0f%n", totalHarga);
-        System.out.println("  ════════════════════════════════════════════════");
+        System.out.println("  =================================================");
 
         // Pilih metode pembayaran
         System.out.println();
-        System.out.println("  ╔══════════════════════════════════════════════╗");
+        System.out.println("  =================================================");
         System.out.println("  ║         PILIH METODE PEMBAYARAN              ║");
-        System.out.println("  ╠══════════════════════════════════════════════╣");
-        System.out.println("  ║  1.  Transfer Bank                           ║");
-        System.out.println("  ║  2.  E-Wallet                                ║");
-        System.out.println("  ╚══════════════════════════════════════════════╝");
+        System.out.println("  =================================================");
+        System.out.println("   1.  Transfer Bank                           ");
+        System.out.println("   2.  E-Wallet                                ");
+        System.out.println("  =================================================");
 
         int pilihanMetode;
         while (true) {
@@ -454,36 +412,33 @@ public class Pemesanan {
 
         // Konfirmasi bayar
         System.out.println();
-        System.out.println("  ╔══════════════════════════════════════════════╗");
-        System.out.println("  ║           KONFIRMASI PEMBAYARAN              ║");
-        System.out.println("  ╠══════════════════════════════════════════════╣");
+        System.out.println("  ==================================================");
+        System.out.println("            KONFIRMASI PEMBAYARAN             ");
+        System.out.println("  ==================================================");
         System.out.printf ("  ║  Total Bayar : Rp %-27,.0f║%n", totalHarga);
-        System.out.println("  ╚══════════════════════════════════════════════╝");
+        System.out.println("  =================================================");
         System.out.println();
-        System.out.print("  Tekan ENTER untuk BAYAR SEKARANG...");
+        System.out.print("  Tekan ENTER untuk bayar sekarang");
         scanner.nextLine();
 
         System.out.println();
-        System.out.println("  ╔══════════════════════════════════════════════╗");
-        System.out.println("  ║                                              ║");
-        System.out.println("  ║        ✔   PEMBAYARAN BERHASIL!   ✔         ║");
-        System.out.println("  ║                                              ║");
-        System.out.println("  ╚══════════════════════════════════════════════╝");
+        System.out.println("  =================================================");
+        System.out.println("             PEMBAYARAN BERHASIL!            ");
+        System.out.println("  =================================================");
     }
 
-    // ── Transfer Bank ─────────────────────────────────────────────────────────
     private TransferBank prosesTransferBank(String idPembayaran, String tanggalBayar) {
         System.out.println();
-        System.out.println("  ╔══════════════════════════════════════════════╗");
-        System.out.println("  ║              TRANSFER BANK                   ║");
-        System.out.println("  ╠══════════════════════════════════════════════╣");
+        System.out.println("  ================================================");
+        System.out.println("                TRANSFER BANK                   ");
+        System.out.println("  ================================================");
         for (int i = 0; i < TransferBank.DAFTAR_BANK.length; i++) {
             System.out.printf("  ║  %d.  %-8s  No. Rek : %-18s║%n",
                 i + 1,
                 TransferBank.DAFTAR_BANK[i][0],
                 TransferBank.DAFTAR_BANK[i][1]);
         }
-        System.out.println("  ╚══════════════════════════════════════════════╝");
+        System.out.println("  ==============================================");
 
         int pilihan;
         while (true) {
@@ -499,79 +454,69 @@ public class Pemesanan {
 
         String[] bank = TransferBank.DAFTAR_BANK[pilihan - 1];
         System.out.println();
-        System.out.println("  ── Detail Transfer ──────────────────────────────");
+        System.out.println("  --- Detail Transfer --------------------------");
         System.out.println("  Nama Bank          : " + bank[0]);
         System.out.println("  No. Rekening       : " + bank[1]);
         System.out.println("  Atas Nama          : " + bank[2]);
         System.out.printf ("  Nominal Transfer   : Rp %,.0f%n", totalHarga);
-        System.out.println("  ─────────────────────────────────────────────────");
+        System.out.println("  --------------------------------------------");
 
         return new TransferBank(idPembayaran, tanggalBayar, bank[0], bank[1], bank[2]);
     }
 
-    // ── E-Wallet ──────────────────────────────────────────────────────────────
     private EWallet prosesEWallet(String idPembayaran, String tanggalBayar) {
         System.out.println();
-        System.out.println("  ╔══════════════════════════════════════════════╗");
-        System.out.println("  ║                 E-WALLET                     ║");
-        System.out.println("  ╠══════════════════════════════════════════════╣");
-        for (int i = 0; i < EWallet.DAFTAR_EWALLET.length; i++) {
+        System.out.println("  ===============================================");
+        System.out.println("                   E-WALLET                     ");
+        System.out.println("  ===============================================");
+        for (int i = 0; i < EWallet.pilihan_Ewallet.length; i++) {
             System.out.printf("  ║  %d.  %-12s  No. HP : %-14s║%n",
                 i + 1,
-                EWallet.DAFTAR_EWALLET[i][0],
-                EWallet.DAFTAR_EWALLET[i][1]);
+                EWallet.pilihan_Ewallet[i][0],
+                EWallet.pilihan_Ewallet[i][1]);
         }
-        System.out.println("  ╚══════════════════════════════════════════════╝");
+        System.out.println("  ============================================");
 
         int pilihan;
         while (true) {
-            System.out.print("  Pilih e-wallet (1-" + EWallet.DAFTAR_EWALLET.length + ") : ");
+            System.out.print("  Pilih e-wallet (1-" + EWallet.pilihan_Ewallet.length + ") : ");
             try {
                 pilihan = Integer.parseInt(scanner.nextLine().trim());
-                if (pilihan >= 1 && pilihan <= EWallet.DAFTAR_EWALLET.length) break;
+                if (pilihan >= 1 && pilihan <= EWallet.pilihan_Ewallet.length) break;
                 System.out.println("  Pilihan tidak valid.");
             } catch (NumberFormatException e) {
                 System.out.println("  Input tidak valid.");
             }
         }
 
-        String[] ew = EWallet.DAFTAR_EWALLET[pilihan - 1];
+        String[] ew = EWallet.pilihan_Ewallet[pilihan - 1];
         System.out.println();
-        System.out.println("  ── Detail E-Wallet ──────────────────────────────");
+        System.out.println("  -- Detail E-Wallet ---------------------------");
         System.out.println("  Nama E-Wallet      : " + ew[0]);
         System.out.println("  Nomor Tujuan       : " + ew[1]);
         System.out.printf ("  Nominal Transfer   : Rp %,.0f%n", totalHarga);
-        System.out.println("  ─────────────────────────────────────────────────");
+        System.out.println("  ----------------------------------------------");
 
         return new EWallet(idPembayaran, tanggalBayar, ew[0], ew[1]);
     }
 
-    // =========================================================================
-    //  7. TAMPIL DETAIL PEMESANAN (TIKET AKHIR)
-    // =========================================================================
     private void tampilDetailPemesanan() {
-        System.out.println();
-        System.out.println("  ════════════════════════════════════════════════");
-        System.out.println("  ════════════════════════════════════════════════");
-        System.out.println();
-        System.out.println("           ✈   T  R  A  V  E  L  I  S   ✈        ");
+        System.out.println("=====================================================");
         System.out.println("       Tiket Perjalanan & Konfirmasi Pemesanan     ");
-        System.out.println();
-        System.out.println("  ════════════════════════════════════════════════");
-        System.out.println("  ════════════════════════════════════════════════");
-
+        System.out.println("=====================================================");
+        
         // Data penumpang
         System.out.println();
-        System.out.println("  ════════════════════════════════════════════════");
+        System.out.println("=====================================================");
         System.out.println("                 DATA PENUMPANG                   ");
-        System.out.println("  ════════════════════════════════════════════════");
+        System.out.println("=====================================================");
         penumpang.tampilInfo();
 
         // Detail perjalanan
         System.out.println();
-        System.out.println("  ════════════════════════════════════════════════");
+        System.out.println("=====================================================");
         System.out.println("                DETAIL PERJALANAN                 ");
-        System.out.println("  ════════════════════════════════════════════════");
+        System.out.println("=====================================================");
         kendaraan.tampilInfo();
         System.out.println("  Tanggal Berangkat  : " + tanggalKeberangkatan);
 
@@ -585,23 +530,20 @@ public class Pemesanan {
 
         // Detail pembayaran
         System.out.println();
-        System.out.println("  ════════════════════════════════════════════════");
+        System.out.println("=====================================================");
         System.out.println("                DETAIL PEMBAYARAN                 ");
-        System.out.println("  ════════════════════════════════════════════════");
+        System.out.println("=====================================================");
         pembayaran.tampilInfo();
-        System.out.println("  ────────────────────────────────────────────────");
+        System.out.println("=====================================================");
         System.out.printf ("  TOTAL BAYAR        : Rp %,15.0f%n", totalHarga);
 
         System.out.println();
-        System.out.println("  ════════════════════════════════════════════════");
+        System.out.println("=====================================================");
         System.out.println("   Simpan tiket ini sebagai bukti pemesanan Anda. ");
         System.out.println("        Selamat bepergian bersama Travelis!       ");
-        System.out.println("  ════════════════════════════════════════════════");
+        System.out.println("=====================================================");
     }
 
-    // =========================================================================
-    //  8. TANYA KEMBALI KE MENU
-    // =========================================================================
     private boolean tanyaKembaliMenu() {
         System.out.println();
         System.out.print("  Kembali ke Menu? (ya/tidak) : ");
@@ -609,9 +551,6 @@ public class Pemesanan {
         return jawaban.equals("ya") || jawaban.equals("y");
     }
 
-    // =========================================================================
-    //  HELPER
-    // =========================================================================
     private String generateId(String prefix) {
         return prefix + "-" + (System.currentTimeMillis() % 100_000);
     }

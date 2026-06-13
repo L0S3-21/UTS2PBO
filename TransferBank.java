@@ -1,12 +1,9 @@
 public class TransferBank extends Pembayaran {
 
-    // ── Atribut tambahan ──────────────────────────────────────────────────────
     private String namaBank;
     private String noRekening;
     private String namaPemilikRekening;
 
-    // ── Data bank yang tersedia ───────────────────────────────────────────────
-    // Setiap entri : { namaBank, noRekening, namaPemilikRekening }
     public static final String[][] DAFTAR_BANK = {
         { "BCA",     "1234567890", "PT Travelis Indonesia" },
         { "Mandiri", "0987654321", "PT Travelis Indonesia" },
@@ -14,7 +11,6 @@ public class TransferBank extends Pembayaran {
         { "BRI",     "5544332211", "PT Travelis Indonesia" }
     };
 
-    // ── Constructor ───────────────────────────────────────────────────────────
     public TransferBank(String idPembayaran, String tanggalPembayaran,
                         String namaBank, String noRekening,
                         String namaPemilikRekening) {
@@ -24,12 +20,10 @@ public class TransferBank extends Pembayaran {
         this.namaPemilikRekening = namaPemilikRekening;
     }
 
-    // ── Getter ────────────────────────────────────────────────────────────────
     public String getNamaBank()            { return namaBank; }
     public String getNoRekening()          { return noRekening; }
     public String getNamaPemilikRekening() { return namaPemilikRekening; }
 
-    // ── tampilInfo ────────────────────────────────────────────────────────────
     @Override
     public void tampilInfo() {
         System.out.println("  Metode Pembayaran  : Transfer Bank");

@@ -2,45 +2,41 @@ import java.util.Scanner;
 
 public class Kereta extends Kendaraan {
 
-    // ── Atribut tambahan ──────────────────────────────────────────────────────
-    private int    gerbong;       // gerbong yang dipilih (1-4)
+    private int    gerbong;       
     private double hargaDasar;
 
-    private static final int    KURSI_PER_GERBONG = 40;   // 10 baris × 4 kolom
-    private static final int    TOTAL_GERBONG     = 4;
+    private static final int    kursi_per_gerbong = 40;   
+    private static final int    banyak_gerbong     = 4;
 
-    // ── Constructor ───────────────────────────────────────────────────────────
     public Kereta(String idKendaraan, String namaKendaraan,
                   String[] rute, double hargaDasar) {
 
-        // Kapasitas = 1 gerbong = 40 kursi (user hanya memilih 1 gerbong)
-        super(idKendaraan, "Kereta", namaKendaraan, KURSI_PER_GERBONG, rute);
+       
+        super(idKendaraan, "Kereta", namaKendaraan, kursi_per_gerbong, rute);
 
         this.hargaDasar = hargaDasar;
         this.gerbong    = 1;
         this.tempatDuduk = null;
     }
 
-    // ── Getter tambahan ───────────────────────────────────────────────────────
     public int    getGerbong()    { return gerbong; }
     public double getHargaDasar() { return hargaDasar; }
 
-    // ── Pilih gerbong ─────────────────────────────────────────────────────────
     public void pilihGerbong(Scanner scanner) {
         System.out.println();
-        System.out.println("  ╔══════════════════════════════════════╗");
-        System.out.println("  ║          PILIHAN GERBONG             ║");
-        System.out.println("  ╠══════════════════════════════════════╣");
+        System.out.println("  =================================");
+        System.out.println("           PILIHAN GERBONG            ");
+        System.out.println("  =================================");
         for (int g = 1; g <= TOTAL_GERBONG; g++) {
             System.out.printf("  ║  %d. Gerbong %d  (40 kursi)            ║%n", g, g);
         }
-        System.out.println("  ╚══════════════════════════════════════╝");
+        System.out.println(" ==================================");
         System.out.print  ("  Pilih gerbong (1-4) : ");
 
         while (true) {
             try {
                 int pilihan = Integer.parseInt(scanner.nextLine().trim());
-                if (pilihan >= 1 && pilihan <= TOTAL_GERBONG) {
+                if (pilihan >= 1 && pilihan <= banyak_gerbong) {
                     gerbong = pilihan;
                     System.out.println("  Gerbong " + gerbong + " dipilih.");
                     break;
@@ -52,24 +48,21 @@ public class Kereta extends Kendaraan {
         }
     }
 
-    // ── Hitung harga ──────────────────────────────────────────────────────────
     @Override
     public double hitungHarga(int jumlahTiket) {
         return hargaDasar * jumlahTiket;
     }
 
-    // ── Tampil & pilih kursi ──────────────────────────────────────────────────
     @Override
     public String pilihKursi(Scanner scanner) {
         System.out.println();
-        System.out.println("  ╔══════════════════════════════════════╗");
-        System.out.println("  ║          DENAH TEMPAT DUDUK          ║");
-        System.out.printf ("  ║          [ KERETA - GERBONG %d ]      ║%n", gerbong);
-        System.out.println("  ╚══════════════════════════════════════╝");
+        System.out.println("  ==================================");
+        System.out.println("            DENAH TEMPAT DUDUK          ");
+        System.out.printf ("            [ KERETA - GERBONG %d ]      %n", gerbong);
+        System.out.println("  ==================================");
         System.out.println("  Keterangan : [ ] = Tersedia  [lorong] = Jalan");
         System.out.println();
 
-        // Denah : A1 B1 [lorong] C1 D1
         char[] sisiKiri  = {'A', 'B'};
         char[] sisiKanan = {'C', 'D'};
 
@@ -120,7 +113,6 @@ public class Kereta extends Kendaraan {
         return kursiDipilih + " (Gerbong " + gerbong + ")";
     }
 
-    // ── tampilInfo ────────────────────────────────────────────────────────────
     @Override
     public void tampilInfo() {
         System.out.println("  Jenis Kendaraan  : " + jenisKendaraan);

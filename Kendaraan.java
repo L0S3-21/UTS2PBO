@@ -17,7 +17,6 @@ public abstract class Kendaraan implements TampilInfo {
         this.rute           = rute;
     }
 
-    // ── Getter ────────────────────────────────────────────────────────────────
     public String getIdKendaraan()    { return idKendaraan; }
     public String getJenisKendaraan() { return jenisKendaraan; }
     public String getNamaKendaraan()  { return namaKendaraan; }
@@ -25,7 +24,6 @@ public abstract class Kendaraan implements TampilInfo {
     public String[] getRute()         { return rute; }
     public char[][] getTempatDuduk()  { return tempatDuduk; }
 
-    // ── Abstract methods ──────────────────────────────────────────────────────
     public abstract double hitungHarga(int jumlahTiket);
     public abstract String pilihKursi(Scanner scanner);
 
