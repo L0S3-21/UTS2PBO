@@ -1,58 +1,84 @@
+import java.util.Scanner;
+
 public class Mobil extends Kendaraan {
 
+    // ── Atribut tambahan ──────────────────────────────────────────────────────
+    private int    lamaSewa;          // dalam jam
+    private double hargaPerJam;
+    private double upahSupirPerJam;
+    private double uangTambahan;
     private String namaSupir;
-    private String platNomor;
 
-    private double hargaPerJam = 50000;
-    private double hargaPerHari = 450000;
-    private double biayaSupir = 150000;
+    // ── Constructor ───────────────────────────────────────────────────────────
+    public Mobil(String idKendaraan, String namaKendaraan,
+                 String namaSupir,
+                 double hargaPerJam, double upahSupirPerJam, double uangTambahan) {
 
-    private int lamaSewa;
-    private String tipeSewa;
+        // Mobil : kapasitas 3 orang, tanpa rute tetap
+        super(idKendaraan, "Mobil", namaKendaraan, 3, new String[]{"", ""});
 
-    public Mobil() {
+        this.namaSupir       = namaSupir;
+        this.hargaPerJam     = hargaPerJam;
+        this.upahSupirPerJam = upahSupirPerJam;
+        this.uangTambahan    = uangTambahan;
+        this.lamaSewa        = 0;
 
-        super("MBL001", "Toyota Innova", "Rental Mobil");
-
-        namaSupir = "Budi Santoso";
-        platNomor = "B 1234 XYZ";
+        // Mobil tidak pakai array tempat duduk (kursi tidak dipilih)
+        this.tempatDuduk = null;
     }
 
-    public void setSewa(int lamaSewa, String tipeSewa) {
+    // ── Getter ────────────────────────────────────────────────────────────────
+    public int    getLamaSewa()        { return lamaSewa; }
+    public double getHargaPerJam()     { return hargaPerJam; }
+    public double getUpahSupirPerJam() { return upahSupirPerJam; }
+    public double getUangTambahan()    { return uangTambahan; }
+    public String getNamaSupir()       { return namaSupir; }
 
-        this.lamaSewa = lamaSewa;
-        this.tipeSewa = tipeSewa;
-    }
+    // ── Input lama sewa ───────────────────────────────────────────────────────
+    public void inputLamaSewa(Scanner scanner) {
+        System.out.println();
+        System.out.println("  ╔══════════════════════════════════════╗");
+        System.out.println("  ║           LAMA SEWA MOBIL            ║");
+        System.out.printf ("  ║  Harga per jam    : Rp %,10.0f   ║%n", hargaPerJam);
+        System.out.printf ("  ║  Upah supir/jam   : Rp %,10.0f   ║%n", upahSupirPerJam);
+        System.out.printf ("  ║  Uang tambahan    : Rp %,10.0f   ║%n", uangTambahan);
+        System.out.println("  ╚══════════════════════════════════════╝");
+        System.out.print  ("  Masukkan lama sewa (jam) : ");
 
-    @Override
-    public double hitungHarga() {
-
-        if (tipeSewa.equalsIgnoreCase("Jam")) {
-            return (hargaPerJam * lamaSewa) + biayaSupir;
+        while (true) {
+            try {
+                lamaSewa = Integer.parseInt(scanner.nextLine().trim());
+                if (lamaSewa > 0) break;
+                System.out.print("  Lama sewa harus lebih dari 0 jam : ");
+            } catch (NumberFormatException e) {
+                System.out.print("  Input tidak valid. Masukkan angka : ");
+            }
         }
-
-        return (hargaPerHari * lamaSewa) + biayaSupir;
+        System.out.printf("  Lama sewa : %d jam%n", lamaSewa);
     }
 
+    // ── Hitung harga ──────────────────────────────────────────────────────────
+    // Total = (hargaPerJam + upahSupirPerJam) × lamaSewa + uangTambahan
     @Override
-    public void pilihKursi() {
+    public double hitungHarga(int jumlahTiket) {
+        return (hargaPerJam + upahSupirPerJam) * lamaSewa + uangTambahan;
     }
 
-    public String getNamaSupir() {
-        return namaSupir;
+    // ── Mobil tidak menggunakan pilihKursi ────────────────────────────────────
+    @Override
+    public String pilihKursi(Scanner scanner) {
+        // Tidak ada pemilihan kursi untuk mobil sewaan
+        return "-";
     }
 
-    public String getPlatNomor() {
-        return platNomor;
-    }
-
+    // ── tampilInfo ────────────────────────────────────────────────────────────
     @Override
     public void tampilInfo() {
-
-        System.out.println("Jenis Kendaraan : " + jenisKendaraan);
-        System.out.println("Nama Kendaraan  : " + namaKendaraan);
-        System.out.println("Nama Supir      : " + namaSupir);
-        System.out.println("Plat Nomor      : " + platNomor);
-        System.out.println("Lama Sewa       : " + lamaSewa + " " + tipeSewa);
+        System.out.println("  Jenis Kendaraan  : " + jenisKendaraan);
+        System.out.println("  ID Kendaraan     : " + idKendaraan);
+        System.out.println("  Nama Kendaraan   : " + namaKendaraan);
+        System.out.println("  Kapasitas        : " + kapasitas + " penumpang");
+        System.out.println("  Lama Sewa        : " + lamaSewa + " jam");
+        System.out.println("  Nama Supir       : " + namaSupir);
     }
 }

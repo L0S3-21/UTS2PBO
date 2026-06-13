@@ -1,31 +1,42 @@
 public class TransferBank extends Pembayaran {
 
+    // ── Atribut tambahan ──────────────────────────────────────────────────────
     private String namaBank;
-    private String nomorRekening;
-    private String namaPemilik;
+    private String noRekening;
+    private String namaPemilikRekening;
 
-    public TransferBank(String idPembayaran,
-                        double totalBayar,
-                        String tanggalPembayaran,
-                        String namaBank,
-                        String nomorRekening,
-                        String namaPemilik) {
+    // ── Data bank yang tersedia ───────────────────────────────────────────────
+    // Setiap entri : { namaBank, noRekening, namaPemilikRekening }
+    public static final String[][] DAFTAR_BANK = {
+        { "BCA",     "1234567890", "PT Travelis Indonesia" },
+        { "Mandiri", "0987654321", "PT Travelis Indonesia" },
+        { "BNI",     "1122334455", "PT Travelis Indonesia" },
+        { "BRI",     "5544332211", "PT Travelis Indonesia" }
+    };
 
-        super(idPembayaran, totalBayar, tanggalPembayaran);
-
-        this.namaBank = namaBank;
-        this.nomorRekening = nomorRekening;
-        this.namaPemilik = namaPemilik;
+    // ── Constructor ───────────────────────────────────────────────────────────
+    public TransferBank(String idPembayaran, String tanggalPembayaran,
+                        String namaBank, String noRekening,
+                        String namaPemilikRekening) {
+        super(idPembayaran, tanggalPembayaran);
+        this.namaBank            = namaBank;
+        this.noRekening          = noRekening;
+        this.namaPemilikRekening = namaPemilikRekening;
     }
 
+    // ── Getter ────────────────────────────────────────────────────────────────
+    public String getNamaBank()            { return namaBank; }
+    public String getNoRekening()          { return noRekening; }
+    public String getNamaPemilikRekening() { return namaPemilikRekening; }
+
+    // ── tampilInfo ────────────────────────────────────────────────────────────
     @Override
-    public void tampilPembayaran() {
-
-        super.tampilPembayaran();
-
-        System.out.println("Metode            : Transfer Bank");
-        System.out.println("Bank              : " + namaBank);
-        System.out.println("No Rekening       : " + nomorRekening);
-        System.out.println("Atas Nama         : " + namaPemilik);
+    public void tampilInfo() {
+        System.out.println("  Metode Pembayaran  : Transfer Bank");
+        System.out.println("  ID Pembayaran      : " + idPembayaran);
+        System.out.println("  Tanggal Pembayaran : " + tanggalPembayaran);
+        System.out.println("  Nama Bank          : " + namaBank);
+        System.out.println("  No. Rekening       : " + noRekening);
+        System.out.println("  Nama Pemilik Rek.  : " + namaPemilikRekening);
     }
 }

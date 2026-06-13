@@ -1,124 +1,132 @@
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Kereta extends Kendaraan {
 
-    private ArrayList<String> rute = new ArrayList<>();
-    private ArrayList<Double> harga = new ArrayList<>();
+    // ── Atribut tambahan ──────────────────────────────────────────────────────
+    private int    gerbong;       // gerbong yang dipilih (1-4)
+    private double hargaDasar;
 
-    private String kelas;
-    private int kapasitas = 80;
+    private static final int    KURSI_PER_GERBONG = 40;   // 10 baris × 4 kolom
+    private static final int    TOTAL_GERBONG     = 4;
 
-    private String jamBerangkat;
-    private String jamTiba;
+    // ── Constructor ───────────────────────────────────────────────────────────
+    public Kereta(String idKendaraan, String namaKendaraan,
+                  String[] rute, double hargaDasar) {
 
-    private String kursiDipilih;
-    private int jumlahTiket;
+        // Kapasitas = 1 gerbong = 40 kursi (user hanya memilih 1 gerbong)
+        super(idKendaraan, "Kereta", namaKendaraan, KURSI_PER_GERBONG, rute);
 
-    private int indexRute;
-    private double hargaKelas;
-
-    private String[][] kursi = new String[20][4];
-
-    public Kereta() {
-
-        super("KRT001", "Argo Bromo", "Kereta");
-
-        rute.add("Jakarta - Bandung");
-        harga.add(150000.0);
-
-        rute.add("Jakarta - Yogyakarta");
-        harga.add(300000.0);
-
-        rute.add("Jakarta - Surabaya");
-        harga.add(450000.0);
-
-        isiKursi();
+        this.hargaDasar = hargaDasar;
+        this.gerbong    = 1;
+        this.tempatDuduk = null;
     }
 
-    private void isiKursi() {
+    // ── Getter tambahan ───────────────────────────────────────────────────────
+    public int    getGerbong()    { return gerbong; }
+    public double getHargaDasar() { return hargaDasar; }
 
-        char huruf = 'A';
+    // ── Pilih gerbong ─────────────────────────────────────────────────────────
+    public void pilihGerbong(Scanner scanner) {
+        System.out.println();
+        System.out.println("  ╔══════════════════════════════════════╗");
+        System.out.println("  ║          PILIHAN GERBONG             ║");
+        System.out.println("  ╠══════════════════════════════════════╣");
+        for (int g = 1; g <= TOTAL_GERBONG; g++) {
+            System.out.printf("  ║  %d. Gerbong %d  (40 kursi)            ║%n", g, g);
+        }
+        System.out.println("  ╚══════════════════════════════════════╝");
+        System.out.print  ("  Pilih gerbong (1-4) : ");
 
-        for (int i = 0; i < 20; i++) {
+        while (true) {
+            try {
+                int pilihan = Integer.parseInt(scanner.nextLine().trim());
+                if (pilihan >= 1 && pilihan <= TOTAL_GERBONG) {
+                    gerbong = pilihan;
+                    System.out.println("  Gerbong " + gerbong + " dipilih.");
+                    break;
+                }
+                System.out.print("  Pilihan tidak valid. Masukkan 1-4 : ");
+            } catch (NumberFormatException e) {
+                System.out.print("  Input tidak valid. Masukkan angka 1-4 : ");
+            }
+        }
+    }
 
-            for (int j = 0; j < 4; j++) {
-                kursi[i][j] = huruf + "" + (j + 1);
+    // ── Hitung harga ──────────────────────────────────────────────────────────
+    @Override
+    public double hitungHarga(int jumlahTiket) {
+        return hargaDasar * jumlahTiket;
+    }
+
+    // ── Tampil & pilih kursi ──────────────────────────────────────────────────
+    @Override
+    public String pilihKursi(Scanner scanner) {
+        System.out.println();
+        System.out.println("  ╔══════════════════════════════════════╗");
+        System.out.println("  ║          DENAH TEMPAT DUDUK          ║");
+        System.out.printf ("  ║          [ KERETA - GERBONG %d ]      ║%n", gerbong);
+        System.out.println("  ╚══════════════════════════════════════╝");
+        System.out.println("  Keterangan : [ ] = Tersedia  [lorong] = Jalan");
+        System.out.println();
+
+        // Denah : A1 B1 [lorong] C1 D1
+        char[] sisiKiri  = {'A', 'B'};
+        char[] sisiKanan = {'C', 'D'};
+
+        System.out.println("  Denah Tempat Duduk :");
+        System.out.println();
+        for (int i = 1; i <= 10; i++) {
+            System.out.print("  ");
+            for (char k : sisiKiri)  System.out.printf("%-4s", k + "" + i);
+            System.out.print("     ");   // lorong
+            for (char k : sisiKanan) System.out.printf("%-4s", k + "" + i);
+            System.out.println();
+        }
+        System.out.println();
+
+        // Input kursi
+        String kursiDipilih = "";
+        while (true) {
+            System.out.print("  Masukkan posisi kursi (contoh: A3, D10) : ");
+            kursiDipilih = scanner.nextLine().trim().toUpperCase();
+
+            if (kursiDipilih.length() < 2) {
+                System.out.println("  Format salah. Gunakan format seperti A3 atau D10.");
+                continue;
             }
 
-            huruf++;
+            char kolom = kursiDipilih.charAt(0);
+            int  baris;
+            try {
+                baris = Integer.parseInt(kursiDipilih.substring(1));
+            } catch (NumberFormatException e) {
+                System.out.println("  Format salah. Gunakan format seperti A3 atau D10.");
+                continue;
+            }
+
+            if ("ABCD".indexOf(kolom) == -1) {
+                System.out.println("  Kolom tidak valid. Pilih antara A-D.");
+                continue;
+            }
+
+            if (baris < 1 || baris > 10) {
+                System.out.println("  Baris tidak valid. Pilih antara 1-10.");
+                continue;
+            }
+
+            System.out.println("  Kursi " + kursiDipilih + " (Gerbong " + gerbong + ") berhasil dipilih.");
+            break;
         }
+        return kursiDipilih + " (Gerbong " + gerbong + ")";
     }
 
-    public void pilihRute(int pilihan) {
-
-        indexRute = pilihan;
-
-        switch (pilihan) {
-
-            case 0:
-                jamBerangkat = "06:00";
-                jamTiba = "09:00";
-                break;
-
-            case 1:
-                jamBerangkat = "07:00";
-                jamTiba = "14:00";
-                break;
-
-            case 2:
-                jamBerangkat = "08:00";
-                jamTiba = "18:00";
-                break;
-        }
-    }
-
-    public void pilihKelas(String kelas) {
-
-        this.kelas = kelas;
-
-        if (kelas.equalsIgnoreCase("Ekonomi")) {
-            hargaKelas = 0;
-        } else {
-            hargaKelas = 150000;
-        }
-    }
-
-    public void setJumlahTiket(int jumlahTiket) {
-
-        if (jumlahTiket > kapasitas) {
-            System.out.println("Kapasitas melebihi batas");
-            return;
-        }
-
-        this.jumlahTiket = jumlahTiket;
-    }
-
-    @Override
-    public double hitungHarga() {
-        return (harga.get(indexRute) + hargaKelas) * jumlahTiket;
-    }
-
-    @Override
-    public void pilihKursi() {
-
-        Scanner input = new Scanner(System.in);
-
-        System.out.print("Pilih Kursi : ");
-        kursiDipilih = input.nextLine();
-        input.close();
-    }
-
+    // ── tampilInfo ────────────────────────────────────────────────────────────
     @Override
     public void tampilInfo() {
-
-        System.out.println("Jenis Kendaraan : " + jenisKendaraan);
-        System.out.println("Nama Kendaraan  : " + namaKendaraan);
-        System.out.println("Rute            : " + rute.get(indexRute));
-        System.out.println("Kelas           : " + kelas);
-        System.out.println("Kursi           : " + kursiDipilih);
-        System.out.println("Jam Berangkat   : " + jamBerangkat);
-        System.out.println("Jam Tiba        : " + jamTiba);
-        System.out.println("Jumlah Tiket    : " + jumlahTiket);
+        System.out.println("  Jenis Kendaraan  : " + jenisKendaraan);
+        System.out.println("  ID Kendaraan     : " + idKendaraan);
+        System.out.println("  Nama Kereta      : " + namaKendaraan);
+        System.out.println("  Rute             : " + rute[0] + " → " + rute[1]);
+        System.out.println("  Gerbong          : " + gerbong);
     }
 }

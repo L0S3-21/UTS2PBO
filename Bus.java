@@ -1,124 +1,122 @@
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Bus extends Kendaraan {
 
-    private ArrayList<String> rute = new ArrayList<>();
-    private ArrayList<Double> harga = new ArrayList<>();
+    // ── Atribut tambahan ──────────────────────────────────────────────────────
+    private double hargaDasar;
 
-    private String kelas;
-    private int kapasitas = 40;
-    private String jamBerangkat;
-    private String jamTiba;
-    private String kursiDipilih;
-    private int jumlahTiket;
+    // Layout bus :
+    //   Baris 1-6  : format 2-2  → 4 kursi per baris = 24 kursi
+    //   Baris 7    : format 2-2  → 4 kursi
+    //   Baris 8    : kursi belakang 5 = 1 baris 5 kursi penuh (kolom 0-4, tanpa lorong)
+    //   Total : (7 × 4) + 3 = 31 kursi
+    // Array dimensi : 8 baris × 6 kolom
+    //   Kolom 0-1  = sisi kiri (A B)
+    //   Kolom 2    = lorong (kecuali baris 8)
+    //   Kolom 3-4  = sisi kanan (C D)
+    //   Kolom 5    = kolom extra hanya untuk baris ke-8 (kursi E)
 
-    private String[][] kursi = new String[10][4];
+    // ── Constructor ───────────────────────────────────────────────────────────
+    public Bus(String idKendaraan, String namaKendaraan,
+               String[] rute, double hargaDasar) {
 
-    public Bus() {
-        super("BUS001", "Sinar Jaya", "Bus");
-
-        rute.add("Jakarta - Bandung");
-        harga.add(120000.0);
-
-        rute.add("Jakarta - Yogyakarta");
-        harga.add(250000.0);
-
-        rute.add("Jakarta - Surabaya");
-        harga.add(350000.0);
-
-        isiKursi();
+        super(idKendaraan, "Bus", namaKendaraan, 31, rute);
+        this.hargaDasar = hargaDasar;
+        this.tempatDuduk = null;
     }
 
-    private int indexRute;
-    private double hargaKelas;
+    // ── Getter ────────────────────────────────────────────────────────────────
+    public double getHargaDasar() { return hargaDasar; }
 
-    private void isiKursi() {
-        char baris = 'A';
-
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 4; j++) {
-                kursi[i][j] = baris + "" + (j + 1);
-            }
-            baris++;
-        }
-    }
-
-    public void pilihRute(int pilihan) {
-
-        indexRute = pilihan;
-
-        switch (pilihan) {
-            case 0:
-                jamBerangkat = "07:00";
-                jamTiba = "11:00";
-                break;
-
-            case 1:
-                jamBerangkat = "08:00";
-                jamTiba = "18:00";
-                break;
-
-            case 2:
-                jamBerangkat = "09:00";
-                jamTiba = "22:00";
-                break;
-        }
-    }
-
-    public void pilihKelas(String kelas) {
-
-        this.kelas = kelas;
-
-        if (kelas.equalsIgnoreCase("Ekonomi")) {
-            hargaKelas = 0;
-        } else {
-            hargaKelas = 75000;
-        }
-    }
-
-    public void setJumlahTiket(int jumlahTiket) {
-
-        if (jumlahTiket > kapasitas) {
-            System.out.println("Kapasitas melebihi batas");
-            return;
-        }
-
-        this.jumlahTiket = jumlahTiket;
-    }
-
+    // ── Hitung harga ──────────────────────────────────────────────────────────
     @Override
-    public double hitungHarga() {
-        return (harga.get(indexRute) + hargaKelas) * jumlahTiket;
+    public double hitungHarga(int jumlahTiket) {
+        return hargaDasar * jumlahTiket;
     }
 
+    // ── Tampil & pilih kursi ──────────────────────────────────────────────────
     @Override
-    public void pilihKursi() {
+    public String pilihKursi(Scanner scanner) {
+        System.out.println();
+        System.out.println("  ╔══════════════════════════════════════╗");
+        System.out.println("  ║          DENAH TEMPAT DUDUK          ║");
+        System.out.println("  ║               [ BUS ]                ║");
+        System.out.println("  ╚══════════════════════════════════════╝");
+        System.out.println("  Keterangan : [ ] = Tersedia  [lorong] = Jalan");
+        System.out.println();
 
-        Scanner input = new Scanner(System.in);
+        // Baris 1-7 : A B [lorong] C D
+        // Baris 8   : A B C D E (kursi belakang, tanpa lorong)
+        char[] sisiKiri  = {'A', 'B'};
+        char[] sisiKanan = {'C', 'D'};
 
-        for (String[] row : kursi) {
-            for (String seat : row) {
-                System.out.print(seat + " ");
-            }
+        System.out.println("  Denah Tempat Duduk :");
+        System.out.println();
+        for (int i = 1; i <= 7; i++) {
+            System.out.print("  ");
+            for (char k : sisiKiri)  System.out.printf("%-4s", k + "" + i);
+            System.out.print("     ");   // lorong
+            for (char k : sisiKanan) System.out.printf("%-4s", k + "" + i);
             System.out.println();
         }
+        // Baris 8 : kursi belakang A-E tanpa lorong
+        System.out.print("  ");
+        for (char k : new char[]{'A','B','C','D','E'}) System.out.printf("%-4s", k + "8");
+        System.out.println();
+        System.out.println();
+        System.out.println("  * Baris 8 : 5 kursi belakang (A-E)");
+        System.out.println();
 
-        System.out.print("Pilih Kursi : ");
-        kursiDipilih = input.nextLine();
-        input.close();
+        // Input kursi
+        String kursiDipilih = "";
+        while (true) {
+            System.out.print("  Masukkan posisi kursi (contoh: A3, C7, A8) : ");
+            kursiDipilih = scanner.nextLine().trim().toUpperCase();
+
+            if (kursiDipilih.length() < 2) {
+                System.out.println("  Format salah. Gunakan format seperti A3 atau C7.");
+                continue;
+            }
+
+            char kolom = kursiDipilih.charAt(0);
+            int  baris;
+            try {
+                baris = Integer.parseInt(kursiDipilih.substring(1));
+            } catch (NumberFormatException e) {
+                System.out.println("  Format salah. Gunakan format seperti A3 atau C7.");
+                continue;
+            }
+
+            if (baris < 1 || baris > 8) {
+                System.out.println("  Baris tidak valid. Pilih antara 1-8.");
+                continue;
+            }
+
+            if (baris < 8) {
+                if ("ABCD".indexOf(kolom) == -1) {
+                    System.out.println("  Kolom tidak valid untuk baris 1-7. Pilih A-D.");
+                    continue;
+                }
+            } else {
+                if ("ABCDE".indexOf(kolom) == -1) {
+                    System.out.println("  Kolom tidak valid untuk baris 8. Pilih A-E.");
+                    continue;
+                }
+            }
+
+            System.out.println("  Kursi " + kursiDipilih + " berhasil dipilih.");
+            break;
+        }
+        return kursiDipilih;
     }
 
+    // ── tampilInfo ────────────────────────────────────────────────────────────
     @Override
     public void tampilInfo() {
-
-        System.out.println("Jenis Kendaraan : " + jenisKendaraan);
-        System.out.println("Nama Kendaraan  : " + namaKendaraan);
-        System.out.println("Rute            : " + rute.get(indexRute));
-        System.out.println("Kelas           : " + kelas);
-        System.out.println("Kursi           : " + kursiDipilih);
-        System.out.println("Jam Berangkat   : " + jamBerangkat);
-        System.out.println("Jam Tiba        : " + jamTiba);
-        System.out.println("Jumlah Tiket    : " + jumlahTiket);
+        System.out.println("  Jenis Kendaraan  : " + jenisKendaraan);
+        System.out.println("  ID Kendaraan     : " + idKendaraan);
+        System.out.println("  Nama Bus         : " + namaKendaraan);
+        System.out.println("  Rute             : " + rute[0] + " → " + rute[1]);
+        System.out.println("  Kapasitas        : " + kapasitas + " penumpang");
     }
 }
